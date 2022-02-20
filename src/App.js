@@ -4,7 +4,7 @@ import LayoutTest from "./pages/LayoutTest";
 function App() {
   return (<>
     <Routes>
-      <Route path='/' element={LayoutTest} />
+      <Route path='/' element={<LayoutTest />} />
     </Routes>
   </>);
 }
