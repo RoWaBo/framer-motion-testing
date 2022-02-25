@@ -14,6 +14,7 @@ import MenuOne from "../components/MenuOne";
 import ArticleSmallToFullsize from "../components/ArticleSmallToFullsize.js";
 import ImgThumbToFullSize from "../components/ImgThumbToFullSize";
 import ToggleContent from "../components/ToggleContent";
+import NavBar from "../components/NavBar";
 
 const LayoutTest = () => {
 	const screenWidth = window.screen.width;
@@ -73,7 +74,7 @@ const LayoutTest = () => {
 		<main css={mainStyle}>
 			<MenuOne />
 
-			<ArticleSmallToFullsize />
+			{/* <ArticleSmallToFullsize />
 
 			<section
 				css={css`
@@ -84,13 +85,13 @@ const LayoutTest = () => {
 					imgSizeThumb={{ width: "200px", height: "200px" }}
 					imgSizeFull={{ width: "90vw", height: "90vw" }}
 				/>
-			</section>
+			</section> */}
 
-			<LayoutGroup id="toggleContent">
+			{/* <LayoutGroup id="toggleContent">
 				{items.map((item, i) => (
 					<ToggleContent heading={item} key={i} />
 				))}
-			</LayoutGroup>
+			</LayoutGroup> */}
 
 			<div css={dragCotainerStyle} ref={dragContainer}>
 				<motion.div
@@ -105,6 +106,8 @@ const LayoutTest = () => {
 					// dragTransition={{ min: 0, max: 200 }}
 				/>
 			</div>
+
+			<NavBar />
 		</main>
 	);
 };
