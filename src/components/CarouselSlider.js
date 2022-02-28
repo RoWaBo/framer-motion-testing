@@ -4,11 +4,11 @@ import { css } from "@emotion/react";
 import { useState } from "react";
 
 const CarouselSlider = ({ ...props }) => {
-	const sliderControl = useAnimation();
+	const sliderAnimationControl = useAnimation();
 	const [draggedImgID, setDraggedImgID] = useState(0);
 
 	// === OPTIONS/ VARIABLES ===
-	const sliderWidth = window.screen.width;
+	const sliderWidth = window.screen.width; // NEEDS to be pixel value
 	const sliderHeight = "500px";
 	const imgPadding = "0 0.5rem";
 	const images = [
@@ -27,13 +27,14 @@ const CarouselSlider = ({ ...props }) => {
 	const onDragEnd = (e, { offset }) => {
 		// Dragging forward
 		if (offset.x < 0) {
-			if (draggedImgID === images.length) return sliderControl.start("end");
-			sliderControl.start("forward");
+			if (draggedImgID === images.length)
+				return sliderAnimationControl.start("end");
+			sliderAnimationControl.start("forward");
 		}
 		// Dragging backwards
 		else if (offset.x > 0) {
-			if (draggedImgID === 1) return sliderControl.start("initial");
-			sliderControl.start("back");
+			if (draggedImgID === 1) return sliderAnimationControl.start("initial");
+			sliderAnimationControl.start("back");
 		}
 	};
 
@@ -42,6 +43,7 @@ const CarouselSlider = ({ ...props }) => {
 		width: ${sliderWidth}px;
 		height: ${sliderHeight};
 		overflow-x: hidden;
+		position: relative;
 		margin: 0 auto;
 	`;
 	const imgContainerStyle = css`
@@ -55,9 +57,22 @@ const CarouselSlider = ({ ...props }) => {
 		object-fit: cover;
 		object-position: center;
 	`;
+	const dotListStyle = css`
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		margin: 0.5rem 0;
+	`;
+	const dotStyle = css`
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		margin: 0 0.2rem;
+	`;
 
 	//  === ANIMATION VARIANTS ===
-	const sliderMotion = {
+	const sliderAnimations = {
 		initial: {
 			x: 0,
 		},
@@ -77,14 +92,25 @@ const CarouselSlider = ({ ...props }) => {
 		},
 	};
 
+	const dotAnimations = {
+		active: {
+			scale: 1.1,
+			background: "#3b82f6",
+		},
+		passive: {
+			scale: 1,
+			background: "#d6d3d1",
+		},
+	};
+
 	return (
 		<section css={sliderContainerStyle} {...props}>
 			<motion.div
 				css={imgContainerStyle}
 				drag="x"
-				variants={sliderMotion}
-				animate={sliderControl}
-				transition={sliderMotion.transition}
+				variants={sliderAnimations}
+				animate={sliderAnimationControl}
+				transition={sliderAnimations.transition}
 				onDragEnd={onDragEnd}>
 				{images.map((imgUrl, i) => (
 					<motion.img
@@ -96,6 +122,17 @@ const CarouselSlider = ({ ...props }) => {
 					/>
 				))}
 			</motion.div>
+			<motion.ul css={dotListStyle} layout>
+				{images.map((img, i) => (
+					<motion.li
+						key={i}
+						css={dotStyle}
+						layout
+						variants={dotAnimations}
+						animate={i === draggedImgID ? "active" : "passive"}
+					/>
+				))}
+			</motion.ul>
 		</section>
 	);
 };
