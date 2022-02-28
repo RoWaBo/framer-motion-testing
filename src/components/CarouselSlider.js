@@ -5,12 +5,10 @@ import { useState } from "react";
 
 const CarouselSlider = ({ ...props }) => {
 	const sliderAnimationControl = useAnimation();
-	const [draggedImgID, setDraggedImgID] = useState(0);
+	const [draggedImgID, setDraggedImgID] = useState(1);
+	const [activeDotIndex, setActiveDotIndex] = useState(0);
 
 	// === OPTIONS/ VARIABLES ===
-	const sliderWidth = window.screen.width; // NEEDS to be pixel value
-	const sliderHeight = "500px";
-	const imgPadding = "0 0.5rem";
 	const images = [
 		"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1143&q=80",
 		"https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
@@ -22,6 +20,12 @@ const CarouselSlider = ({ ...props }) => {
 		"https://images.unsplash.com/photo-1606225457115-9b0de873c5db?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTJ8fGNhdHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
 		"https://images.unsplash.com/photo-1596854307943-279e29c90c14?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGNhdHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
 	];
+	const sliderWidth = window.screen.width; // NEEDS to be pixel value
+	const sliderHeight = "500px";
+	const imgPadding = "0 0.5rem";
+	const progressDots = true; // renders a dot for each image
+	const activeDotColor = "#3b82f6";
+	const passiveDotColor = "#d6d3d1";
 
 	// === FUNCTIONS ===
 	const onDragEnd = (e, { offset }) => {
@@ -30,11 +34,13 @@ const CarouselSlider = ({ ...props }) => {
 			if (draggedImgID === images.length)
 				return sliderAnimationControl.start("end");
 			sliderAnimationControl.start("forward");
+			progressDots && setActiveDotIndex(activeDotIndex + 1);
 		}
 		// Dragging backwards
 		else if (offset.x > 0) {
 			if (draggedImgID === 1) return sliderAnimationControl.start("initial");
 			sliderAnimationControl.start("back");
+			progressDots && setActiveDotIndex(activeDotIndex - 1);
 		}
 	};
 
@@ -62,13 +68,18 @@ const CarouselSlider = ({ ...props }) => {
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		margin: 0.5rem 0;
+		margin: 0.8rem 0;
+		position: absolute;
+		bottom: 0;
 	`;
 	const dotStyle = css`
-		width: 10px;
-		height: 10px;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
 		margin: 0 0.2rem;
+		box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
+			rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+			rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 	`;
 
 	//  === ANIMATION VARIANTS ===
@@ -94,12 +105,12 @@ const CarouselSlider = ({ ...props }) => {
 
 	const dotAnimations = {
 		active: {
-			scale: 1.1,
-			background: "#3b82f6",
+			scale: 1.4,
+			background: activeDotColor,
 		},
 		passive: {
 			scale: 1,
-			background: "#d6d3d1",
+			background: passiveDotColor,
 		},
 	};
 
@@ -122,17 +133,19 @@ const CarouselSlider = ({ ...props }) => {
 					/>
 				))}
 			</motion.div>
-			<motion.ul css={dotListStyle} layout>
-				{images.map((img, i) => (
-					<motion.li
-						key={i}
-						css={dotStyle}
-						layout
-						variants={dotAnimations}
-						animate={i === draggedImgID ? "active" : "passive"}
-					/>
-				))}
-			</motion.ul>
+			{progressDots && (
+				<motion.ul css={dotListStyle} layout>
+					{images.map((img, i) => (
+						<motion.li
+							key={i}
+							css={dotStyle}
+							layout
+							variants={dotAnimations}
+							animate={i === activeDotIndex ? "active" : "passive"}
+						/>
+					))}
+				</motion.ul>
+			)}
 		</section>
 	);
 };
